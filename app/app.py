@@ -2,13 +2,18 @@ import json
 
 from flask import Flask
 from flask import render_template, redirect, flash, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 from app.forms import LoginForm
 
 app = Flask(__name__)
-
 app.config.from_file("../config.json", load=json.load)
 
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+from app.models import User
 
 @app.route("/")
 @app.route("/index")
