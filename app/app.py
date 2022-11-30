@@ -22,9 +22,11 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 
 from app.models import User, Post
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm
 
 login.login_view = "login"
+login.login_message_category = "danger"
+login.login_message = "Faça o login  para acessar esta página."
 
 
 @app.shell_context_processor
@@ -76,3 +78,26 @@ def register():
         flash("Usuário registrado com sucesso!", "success")
         return redirect(url_for("login"))
     return render_template("register.html", title="Cadastro", form=form)
+
+
+@app.route("/profile/<username>")
+def profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = [
+        {"id": 1, "author": user, "body": "Test post #1"},
+        {"id": 2, "author": user, "body": "Test post #2"},
+    ]
+    return render_template("profile.html", title=username, user=user, posts=posts)
+
+
+@app.route("/edit", methods=["GET", "POST"])
+@login_required
+def edit():
+    form = EditProfileForm(
+        data={"username": current_user.username, "about_me": current_user.about_me}
+    )
+    if form.validate_on_submit():
+        form.populate_obj(current_user)
+        db.session.commit()
+        return redirect(url_for("profile", username=current_user.username))
+    return render_template("edit.html", title="Editar Perfil", form=form)
