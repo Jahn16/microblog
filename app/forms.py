@@ -6,11 +6,9 @@ from app.app import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField(
-        "Usuário", validators=[DataRequired(message="Insira um usuário")]
-    )
+    email = EmailField("Email", validators=[DataRequired(message="Insira um e-mail.")])
     password = PasswordField(
-        "Senha", validators=[DataRequired(message="Insira uma senha")]
+        "Senha", validators=[DataRequired(message="Insira uma senha.")]
     )
     remember_me = BooleanField("Lembrar de mim")
 
