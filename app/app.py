@@ -96,7 +96,11 @@ def profile(username):
 @login_required
 def edit():
     form = EditProfileForm(
-        data={"username": current_user.username, "about_me": current_user.about_me}
+        data={
+            "previous_username": current_user.username,
+            "username": current_user.username,
+            "about_me": current_user.about_me,
+        }
     )
     if form.validate_on_submit():
         form.populate_obj(current_user)

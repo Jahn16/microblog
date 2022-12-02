@@ -1,5 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, EmailField, TextAreaField
+from wtforms import (
+    StringField,
+    PasswordField,
+    BooleanField,
+    EmailField,
+    TextAreaField,
+    HiddenField,
+)
 from wtforms.validators import DataRequired, EqualTo, ValidationError, Length
 
 from app.app import User
@@ -33,7 +40,15 @@ class RegistrationForm(FlaskForm):
 
 
 class EditProfileForm(FlaskForm):
+    previous_username = HiddenField()
     username = StringField(
         "Usuário", validators=[DataRequired(message="Insira um usuário")]
     )
     about_me = TextAreaField("Descrição", validators=[Length(min=0, max=140)])
+
+    def validate_username(self, username):
+        if self.previous_username.data == self.username.data:
+            return
+
+        if User.query.filter_by(username=username.data).first():
+            raise ValidationError("Nome de usuário indisponível")
