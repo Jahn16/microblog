@@ -21,8 +21,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 
+from app import errors
 from app.models import User, Post
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
+
 
 login.login_view = "login"
 login.login_message_category = "danger"
