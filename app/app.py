@@ -23,7 +23,7 @@ login = LoginManager(app)
 
 from app import errors
 from app.models import User, Post
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, FollowForm
 
 
 login.login_view = "login"
@@ -89,7 +89,10 @@ def profile(username):
         {"id": 1, "author": user, "body": "Test post #1"},
         {"id": 2, "author": user, "body": "Test post #2"},
     ]
-    return render_template("profile.html", title=username, user=user, posts=posts)
+    form = FollowForm(data={"followed_id": user.id})
+    return render_template(
+        "profile.html", title=username, user=user, posts=posts, form=form
+    )
 
 
 @app.route("/edit", methods=["GET", "POST"])
@@ -107,3 +110,24 @@ def edit():
         db.session.commit()
         return redirect(url_for("profile", username=current_user.username))
     return render_template("edit.html", title="Editar Perfil", form=form)
+
+
+@app.route("/follow_unfollow", methods=["POST"])
+@login_required
+def follow_unfollow():
+    form = FollowForm()
+    if form.validate_on_submit():
+        if form.followed_id.data == current_user.id:
+            return redirect(url_for("profile", username=current_user.username))
+
+        followed_user = User.query.get(form.followed_id.data)
+        if not followed_user:
+            return redirect(url_for("index"))
+
+        if not current_user.is_following(followed_user):
+            current_user.follow(followed_user)
+        else:
+            current_user.unfollow(followed_user)
+        db.session.commit()
+        return redirect(url_for("profile", username=followed_user.username))
+    return redirect(url_for("index"))

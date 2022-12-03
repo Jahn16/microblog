@@ -52,3 +52,7 @@ class EditProfileForm(FlaskForm):
 
         if User.query.filter_by(username=username.data).first():
             raise ValidationError("Nome de usuário indisponível")
+
+
+class FollowForm(FlaskForm):
+    followed_id = HiddenField()
