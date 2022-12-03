@@ -7,13 +7,19 @@ from wtforms import (
     TextAreaField,
     HiddenField,
 )
-from wtforms.validators import DataRequired, EqualTo, ValidationError, Length
+from wtforms.validators import DataRequired, EqualTo, ValidationError, Length, Email
 
 from app.app import User
 
 
 class LoginForm(FlaskForm):
-    email = EmailField("Email", validators=[DataRequired(message="Insira um e-mail.")])
+    email = EmailField(
+        "Email",
+        validators=[
+            DataRequired(message="Insira um e-mail."),
+            Email("Insira um e-mail válido."),
+        ],
+    )
     password = PasswordField(
         "Senha", validators=[DataRequired(message="Insira uma senha.")]
     )
