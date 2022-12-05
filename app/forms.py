@@ -62,3 +62,13 @@ class EditProfileForm(FlaskForm):
 
 class FollowForm(FlaskForm):
     followed_id = HiddenField()
+
+
+class PostForm(FlaskForm):
+    content = TextAreaField(
+        "Diga algo",
+        validators=[
+            DataRequired(message="Insira uma mensagem."),
+            Length(min=1, max=140),
+        ],
+    )

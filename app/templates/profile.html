@@ -22,9 +22,10 @@
               {% endif %}
             </p>
             {% if current_user == user %}
-            <div class="d-grid gap-2 col-6 mx-auto">
-              <a href="{{ url_for('edit') }}" class="btn btn-outline-secondary">Editar</button>
-                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Sair</a>
+            <div class="mx-auto">
+              <a href="{{ url_for('edit') }}" class="btn btn-outline-secondary"><i class="fas fa-edit"></i></a>
+              <a href="{{ url_for('logout') }}" class="btn btn-outline-danger"><i
+                  class="fa-solid fa-arrow-right-from-bracket"></i></a>
             </div>
             {% elif not current_user.is_following(user) %}
             <form action="{{ url_for('follow_unfollow') }}" method="post">

@@ -23,7 +23,7 @@ login = LoginManager(app)
 
 from app import errors
 from app.models import User, Post
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, FollowForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, FollowForm, PostForm
 
 
 login.login_view = "login"
@@ -36,11 +36,14 @@ def make_shell_context():
     return {"db": db, "User": User, "Post": Post}
 
 
-@app.route("/")
-@app.route("/index")
+@app.route("/", methods=["GET", "POST"])
+@app.route("/index", methods=["GET", "POST"])
 def index():
+    form = PostForm()
+    if form.validate_on_submit():
+        return redirect(url_for("index"))
     posts = Post.query.all()
-    return render_template("index.html", title="Home", posts=posts)
+    return render_template("index.html", title="Home", posts=posts, form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])
