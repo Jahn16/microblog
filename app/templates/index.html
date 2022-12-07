@@ -1,29 +1,64 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if current_user.is_authenticated %}
-<h1>Bem vindo, {{ current_user.username }}!</h1>
-{% endif %}
-{% for post in posts %}
-<div>
-  <p>{{ post.author.username }} diz: <b>{{ post.body }}</b></p>
-</div>
-{% endfor %}
-<form method="post" action="" novalidate>
-  {{ form.csrf_token }}
-  <div class="input-group mb-3">
-    {% if not form.content.errors %}
-    {{ form.content(cols=32, rows=4, class="form-control")}}
-    {% else %}
-    {{ form.content(cols=32, rows=4, class="form-control is-invalid")}}
-    {% endif %}
-    <button class="btn btn-outline-primary" type="submit" id="button-addon2"><i
-        class="fa-regular fa-paper-plane px-1"></i></button>
-    {% if form.content.errors %}
-    <div class="invalid-feedback">
-      {{ form.content.errors | join(", ") }}
+<h2>{{ title }}</h2>
+<div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+  {% for post in posts %}
+  <div class="col mt-0">
+    <div class="card mb-2" style="max-width: 540px;">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ post.author.avatar(256) }}" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title"><a href="{{ url_for('profile', username=post.author.username) }}"
+                style="text-decoration: none;color: inherit">{{ post.author.username }}</a></h5>
+            <p class="card-text">{{ post.body }}</p>
+            <p class="card-text"><small class="text-muted">{{ post.timestamp }}</small></p>
+          </div>
+        </div>
+      </div>
     </div>
-    {% endif %}
   </div>
-</form>
+  {% endfor %}
+</div>
+<div class="container">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% for page in posts.iter_pages(left_edge=1, left_current=1, right_current=1, right_edge=1) %}
+      {% if page %}
+      <li class="page-item{% if posts.page == page %} active{% endif %}"><a class="page-link" href="{{ url_for('index', page=page)}}">{{ page }}</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link">...</a></li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+</div>
+<div class="container">
+  <form method="post" action="{{ url_for('post') }}" class="mx-auto">
+    {{ form.csrf_token }}
+    <div class="input-group mb-1">
+      {% if get_flashed_messages() %}
+      {{ form.content(cols=32, rows=4, class="form-control is-valid")}}
+      {% elif form.content.errors %}
+      {{ form.content(cols=32, rows=4, class="form-control is-invalid")}}
+      {% else %}
+      {{ form.content(cols=32, rows=4, class="form-control")}}
+      {% endif %}
+      <button class="btn btn-outline-primary" type="submit" id="button-addon2"><i
+          class="fa-regular fa-paper-plane px-1"></i></button>
+      {% if form.content.errors %}
+      <div class="invalid-feedback">
+        {{ form.content.errors | join(" ") }}
+      </div>
+      {% elif get_flashed_messages() %}
+      <div class="valid-feedback">
+        {{ get_flashed_messages() | join(" ")}}
+      </div>
+      {% endif %}
+    </div>
+  </form>
+</div>
 {% endblock %}

@@ -36,14 +36,27 @@ def make_shell_context():
     return {"db": db, "User": User, "Post": Post}
 
 
-@app.route("/", methods=["GET", "POST"])
-@app.route("/index", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
+@app.route("/index", methods=["GET"])
 def index():
     form = PostForm()
+    page = request.args.get("page", 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=6, error_out=False
+    )
+    return render_template("index.html", title="Postagens", posts=posts, form=form)
+
+
+@app.route("/post", methods=["POST"])
+@login_required
+def post():
+    form = PostForm()
     if form.validate_on_submit():
+        post = Post(body=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash("Enviado com sucesso.")
         return redirect(url_for("index"))
-    posts = Post.query.all()
-    return render_template("index.html", title="Home", posts=posts, form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])
