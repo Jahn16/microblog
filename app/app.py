@@ -3,6 +3,7 @@ import json
 from flask import Flask
 from flask import render_template, redirect, flash, url_for, request
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 from flask_migrate import Migrate
 from flask_login import (
     LoginManager,
@@ -37,14 +38,37 @@ def make_shell_context():
 
 
 @app.route("/", methods=["GET"])
-@app.route("/index", methods=["GET"])
+@app.route("/index", methods=["GET", "POST"])
 def index():
     form = PostForm()
     page = request.args.get("page", 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=6, error_out=False
     )
-    return render_template("index.html", title="Postagens", posts=posts, form=form)
+    if form.is_submitted():
+        print("sadasdl")
+    return render_template("index.html", posts=posts, form=form)
+
+
+@app.route("/following", methods=["GET"])
+@login_required
+def following():
+    form = PostForm()
+    page = request.args.get("page", 1, type=int)
+    posts = (
+        Post.query.filter(
+            or_(
+                Post.user_id.in_([user.id for user in current_user.following]),
+                Post.user_id.__eq__(current_user.id),
+            )
+        )
+        .order_by(Post.timestamp.desc())
+        .paginate(page=page, per_page=6, error_out=False)
+    )
+    form = PostForm()
+    return render_template(
+        "following.html", posts=posts, form=form
+    )
 
 
 @app.route("/post", methods=["POST"])
@@ -56,7 +80,17 @@ def post():
         db.session.add(post)
         db.session.commit()
         flash("Enviado com sucesso.")
-        return redirect(url_for("index"))
+
+    if request.referrer:
+        if url_parse(request.referrer).path == "login":
+            return redirect(url_for("index"))
+
+        is_url_safe = (
+            url_parse(request.host_url).netloc == url_parse(request.referrer).netloc
+        )
+        if is_url_safe:
+            return redirect(request.referrer)
+    return redirect(url_for("index"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -72,7 +106,7 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get("next")
         if next_page and not url_parse(next_page).netloc:
-            return url_for(next_page)
+            return redirect(next_page, code=307)
         return redirect(url_for("index"))
     return render_template("login.html", title="Sign In", form=form)
 
