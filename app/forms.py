@@ -72,3 +72,14 @@ class PostForm(FlaskForm):
             Length(min=1, max=140),
         ],
     )
+
+
+class ForgotPasswordForm(FlaskForm):
+    email = EmailField("E-mail", validators=[DataRequired()])
+
+
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField("Senha", validators=[DataRequired()])
+    password_confirmation = PasswordField(
+        "Confirme a senha", validators=[DataRequired(), EqualTo("password")]
+    )
