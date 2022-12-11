@@ -3,5 +3,6 @@ Flask-SQLAlchemy==3.0.2
 Flask-Migrate==4.0.0
 Flask-Login==0.6.2
 Flask-Mail==0.9.1
+Flask-Moment==1.0.5
 wtforms[email]==3.0.1
 itsdangerous==2.1.2

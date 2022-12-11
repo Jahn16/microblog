@@ -11,7 +11,7 @@
             <h5 class="card-title"><a href="{{ url_for('profile', username=post.author.username) }}"
                 style="text-decoration: none;color: inherit">{{ post.author.username }}</a></h5>
             <p class="card-text">{{ post.body }}</p>
-            <p class="card-text"><small class="text-muted">{{ post.timestamp }}</small></p>
+            <p class="card-text"><small class="text-muted">{{ moment(post.timestamp).calendar() }}</small></p>
           </div>
         </div>
       </div>

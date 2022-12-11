@@ -13,6 +13,7 @@ from flask_login import (
     login_required,
 )
 from flask_mail import Mail
+from flask_moment import Moment
 from werkzeug.urls import url_parse
 from itsdangerous import URLSafeTimedSerializer
 
@@ -24,6 +25,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 mail = Mail(app)
+moment = Moment(app)
 
 from app import errors
 from app.models import User, Post
