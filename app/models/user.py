@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from hashlib import md5
@@ -49,9 +47,7 @@ class User(UserMixin, db.Model):
     def unfollow(self, user):
         if self.is_following(user):
             self.following.remove(user)
-    
-    def following_posts(self):
-        return Post.query.join(user_follower, (user_follower.c.user_id == Post.user_id)).filter(user_follower.c.user_id == self.id).order_by(Post.timestamp.desc())
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -59,13 +55,3 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id: str):
     return User.query.get(int(id))
-
-
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-
-    def __repr__(self):
-        return f"<Post {self.body}>"

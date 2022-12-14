@@ -4,7 +4,7 @@
 <div class="container">
   <h1>Editar Perfil</h1>
   <p>Deseja alterar sua senha? <a
-      href="{{ url_for('change_password', token=edit_password_token, _external=True) }}">Clique aqui</a></p>
+      href="{{ url_for('auth_bp.change_password', token=edit_password_token, _external=True) }}">Clique aqui</a></p>
   <form action="" method="post" novalidate>
     {{ form.csrf_token }}
     {% for message in get_flashed_messages(with_categories=true) %}

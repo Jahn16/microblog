@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
   <h1>Entrar</h1>
-  <p>Não tem uma conta? <a href="{{ url_for('register') }}">Cadastre-se</a></p>
+  <p>Não tem uma conta? <a href="{{ url_for('auth_bp.register') }}">Cadastre-se</a></p>
   <form action="" method="post" novalidate>
     {{ form.csrf_token }}
     {% for category, message in get_flashed_messages(with_categories=true) %}
@@ -32,6 +32,6 @@
     </div>
     <input type="submit" class="btn btn-primary mb-1">
   </form>
-  <a style="color: gray" href="{{ url_for('forgot_password') }}">Esqueceu a senha?</a>
+  <a style="color: gray" href="{{ url_for('auth_bp.forgot_password') }}">Esqueceu a senha?</a>
 </div>
 {% endblock %}
