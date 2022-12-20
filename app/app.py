@@ -53,11 +53,3 @@ app.register_blueprint(user_bp)
 login.login_view = "auth_bp.login"
 login.login_message_category = "danger"
 login.login_message = "Faça o login  para acessar esta página."
-
-
-@app.shell_context_processor
-def make_shell_context():
-    return {"db": db, "User": User, "Post": Post}
-
-
-
