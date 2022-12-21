@@ -1,6 +1,5 @@
 from flask import request, redirect, url_for, render_template, flash
 from flask_login import login_user, logout_user, current_user
-from werkzeug.urls import url_parse
 
 from app.models.user import User
 from app.utils.email import send_email
@@ -10,7 +9,7 @@ from app.forms import (
     ChangePasswordForm,
     ForgotPasswordForm,
 )
-from app.utils.security import encode_url, decode_url
+from app.utils.security import encode_url, decode_url, is_url_safe
 from app.db import get_db
 
 db = get_db()
@@ -27,7 +26,7 @@ def login():
             return redirect(url_for("login"))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get("next")
-        if next_page and not url_parse(next_page).netloc:
+        if next_page and is_url_safe(next_page):
             return redirect(next_page, code=307)
         return redirect(url_for("index"))
     return render_template("login.html", title="Sign In", form=form)

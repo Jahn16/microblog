@@ -1,11 +1,11 @@
 from flask import request, render_template, redirect, url_for, flash
 from sqlalchemy import or_
 from flask_login import current_user, login_required
-from werkzeug.urls import url_parse
 
 from app.models.post import Post
 from app.forms import PostForm
 from app.db import get_db
+from app.utils.security import is_url_safe
 
 
 db = get_db()
@@ -50,13 +50,6 @@ def post():
         flash("Enviado com sucesso.")
 
     if request.referrer:
-        if url_parse(request.referrer).path == "login":
-            return redirect(url_for("index"))
-
-        is_url_safe = (
-            url_parse(request.host_url).netloc
-            == url_parse(request.referrer).netloc
-        )
-        if is_url_safe:
+        if is_url_safe(request.referrer, request.host_url):
             return redirect(request.referrer)
     return redirect(url_for("index"))
