@@ -7,9 +7,15 @@ from wtforms import (
     TextAreaField,
     HiddenField,
 )
-from wtforms.validators import DataRequired, EqualTo, ValidationError, Length, Email
+from wtforms.validators import (
+    DataRequired,
+    EqualTo,
+    ValidationError,
+    Length,
+    Email,
+)
 
-from app.app import User
+from app.models.user import User
 
 
 class LoginForm(FlaskForm):

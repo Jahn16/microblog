@@ -1,9 +1,12 @@
 from flask import render_template, redirect, url_for
 from flask_login import login_required, current_user
 
-from app.app import db, url_serializer
+from app.db import get_db
 from app.models.user import User
 from app.forms import EditProfileForm, FollowForm
+from app.utils.security import encode_url
+
+db = get_db()
 
 
 def profile(username):
@@ -27,9 +30,7 @@ def edit():
             "about_me": current_user.about_me,
         }
     )
-    edit_password_token = url_serializer.dumps(
-        current_user.email, salt="recover-key"
-    )
+    edit_password_token = encode_url(current_user.email, salt="recover-key")
     if form.validate_on_submit():
         form.populate_obj(current_user)
         db.session.commit()

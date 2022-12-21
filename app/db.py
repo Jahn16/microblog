@@ -1,17 +1,15 @@
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 
-def get_migrate(app):
-    return Migrate(app, db)
+def init_db():
+    db.init_app(current_app._get_current_object())
+    migrate.init_app(current_app)
 
 
-def create_db(app):
-    db.init_app(app)
-    db.create_all(app=app)
-
-
-def init_db(app):
-    db.init_app(app)
+def get_db():
+    return db

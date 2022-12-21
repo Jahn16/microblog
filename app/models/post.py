@@ -1,6 +1,9 @@
 from datetime import datetime
 
-from app.app import db
+from app.db import get_db
+
+
+db = get_db()
 
 
 class Post(db.Model):

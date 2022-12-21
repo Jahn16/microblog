@@ -2,7 +2,12 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from hashlib import md5
 
-from app.app import db, login
+from app.db import get_db
+from app.login import get_login_manager
+
+
+db = get_db()
+login = get_login_manager()
 
 user_follower = db.Table(
     "user_follower",
@@ -38,7 +43,10 @@ class User(UserMixin, db.Model):
         return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}"
 
     def is_following(self, user):
-        return self.following.filter(user_follower.c.user_id == user.id).count() > 0
+        return (
+            self.following.filter(user_follower.c.user_id == user.id).count()
+            > 0
+        )
 
     def follow(self, user):
         if not self.is_following(user):

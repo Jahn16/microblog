@@ -2,16 +2,18 @@ from flask import request, redirect, url_for, render_template, flash
 from flask_login import login_user, logout_user, current_user
 from werkzeug.urls import url_parse
 
-from app.app import db
 from app.models.user import User
 from app.utils.email import send_email
-from app.app import url_serializer
 from app.forms import (
     LoginForm,
     RegistrationForm,
     ChangePasswordForm,
     ForgotPasswordForm,
 )
+from app.utils.security import encode_url, decode_url
+from app.db import get_db
+
+db = get_db()
 
 
 def login():
@@ -57,7 +59,7 @@ def forgot_password():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
-            token = url_serializer.dumps(user.email, salt="recover-key")
+            token = encode_url(user.email, salt="recover-key")
 
             send_email(
                 subject="Redefinição de senha",
@@ -71,7 +73,7 @@ def forgot_password():
 
 
 def change_password(token):
-    email = url_serializer.loads(token, salt="recover-key", max_age=86400)
+    email = decode_url(token, salt="recover-key", max_age=86400)
     form = ChangePasswordForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=email).first_or_404()

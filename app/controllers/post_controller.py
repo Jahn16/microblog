@@ -5,7 +5,10 @@ from werkzeug.urls import url_parse
 
 from app.models.post import Post
 from app.forms import PostForm
-from app.app import db
+from app.db import get_db
+
+
+db = get_db()
 
 
 def posts():
@@ -51,7 +54,8 @@ def post():
             return redirect(url_for("index"))
 
         is_url_safe = (
-            url_parse(request.host_url).netloc == url_parse(request.referrer).netloc
+            url_parse(request.host_url).netloc
+            == url_parse(request.referrer).netloc
         )
         if is_url_safe:
             return redirect(request.referrer)
