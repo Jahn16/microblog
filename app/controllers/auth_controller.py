@@ -47,7 +47,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash("Usuário registrado com sucesso!", "success")
-        return redirect(url_for("login"))
+        return redirect(url_for("auth_bp.login"))
     return render_template("register.html", title="Cadastro", form=form)
 
 
@@ -80,5 +80,5 @@ def change_password(token):
         db.session.commit()
         logout_user()
         flash("Sua senha foi redefinada com sucesso.", category="success")
-        return redirect(url_for("login"))
+        return redirect(url_for("auth_bp.login"))
     return render_template("change_password.html", form=form)
