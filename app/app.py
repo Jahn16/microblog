@@ -16,7 +16,10 @@ moment = Moment()
 
 def create_app(test_config=None):
     app = Flask(__name__)
-    app.config.from_file("../config.json", load=json.load)
+    if not test_config:
+        app.config.from_file("../config.json", load=json.load)
+    else:
+        app.config.from_mapping(test_config)
 
     with app.app_context():
         init_db()
