@@ -3,11 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from hashlib import md5
 
 from app.db import get_db
-from app.login import get_login_manager
 
 
 db = get_db()
-login = get_login_manager()
 
 user_follower = db.Table(
     "user_follower",
@@ -58,8 +56,3 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
-
-
-@login.user_loader
-def load_user(id: str):
-    return User.query.get(int(id))
