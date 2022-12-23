@@ -66,4 +66,4 @@ def follow_unfollow():
         return redirect(
             url_for("user_bp.profile", username=followed_user.username)
         )
-    return redirect(url_for("post_bp.index"))
+    return redirect(url_for("index"))
