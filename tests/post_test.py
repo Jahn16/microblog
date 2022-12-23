@@ -16,7 +16,6 @@ def app():
         "SECRET_KEY": "TEST",
     }
     app = create_app(config)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
     app.test_client_class = FlaskLoginClient
     with app.app_context():
         db.create_all()
