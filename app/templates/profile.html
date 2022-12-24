@@ -49,12 +49,12 @@
     <div class="col">
       <h2>Postagens</h2>
       <div class="accordion pt-3" id="posts">
-        {% for post in posts %}
+        {% for post in posts[-5:] %}
         <div class="accordion-item">
           <h2 class="accordion-header" id="heading{{ post.id }}">
             <button class="accordion-button" type="button" data-bs-toggle="collapse"
               data-bs-target="#collapse{{ post.id }}" aria-expanded="true" aria-controls="collapse{{ post.id }}">
-              Postagem #{{ post.id }}
+              {{ moment(post.timestamp).calendar() }}
             </button>
           </h2>
           <div id="collapse{{ post.id }}" class="accordion-collapse collapse show" aria-labelledby="heading1"

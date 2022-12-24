@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 
 from app.db import get_db
 from app.models.user import User
+from app.models.post import Post
 from app.forms import EditProfileForm, FollowForm
 from app.utils.security import encode_url
 
@@ -11,10 +12,11 @@ db = get_db()
 
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {"id": 1, "author": user, "body": "Test post #1"},
-        {"id": 2, "author": user, "body": "Test post #2"},
-    ]
+    posts = (
+        Post.query.filter_by(user_id=user.id)
+        .order_by(Post.timestamp.desc())
+        .all()
+    )
     form = FollowForm(data={"followed_id": user.id})
     return render_template(
         "profile.html", title=username, user=user, posts=posts, form=form
