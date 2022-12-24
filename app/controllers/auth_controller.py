@@ -67,7 +67,8 @@ def forgot_password():
                     "email/forgot_password.html", token=token, user=user
                 ),
             )
-        return redirect(url_for("index"))
+        flash("Um e-mail para redefinição de senha foi enviado.", "info")
+        return redirect(url_for("auth_bp.login"))
     return render_template(
         "forgot_password.html", title="Redefinição", form=form
     )
