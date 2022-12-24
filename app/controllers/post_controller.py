@@ -37,7 +37,9 @@ def followed_posts():
         .paginate(page=page, per_page=6, error_out=False)
     )
     form = PostForm()
-    return render_template("following.html", posts=posts, form=form)
+    return render_template(
+        "following.html", title="Seguidas", posts=posts, form=form
+    )
 
 
 @login_required

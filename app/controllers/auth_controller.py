@@ -29,7 +29,7 @@ def login():
         if next_page and is_url_safe(next_page):
             return redirect(next_page, code=307)
         return redirect(url_for("index"))
-    return render_template("login.html", title="Sign In", form=form)
+    return render_template("login.html", title="Entrar", form=form)
 
 
 def logout():
@@ -68,7 +68,9 @@ def forgot_password():
                 ),
             )
         return redirect(url_for("index"))
-    return render_template("forgot_password.html", form=form)
+    return render_template(
+        "forgot_password.html", title="Redefinição", form=form
+    )
 
 
 def change_password(token):
@@ -81,4 +83,6 @@ def change_password(token):
         logout_user()
         flash("Sua senha foi redefinada com sucesso.", category="success")
         return redirect(url_for("auth_bp.login"))
-    return render_template("change_password.html", form=form)
+    return render_template(
+        "change_password.html", title="Redefinição", form=form
+    )
