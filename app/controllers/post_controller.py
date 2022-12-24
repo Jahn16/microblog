@@ -47,7 +47,7 @@ def post():
         post = Post(body=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash("Enviado com sucesso.")
+        flash("Enviado com sucesso.", category="validation")
 
     if request.referrer:
         if is_url_safe(request.referrer, request.host_url):

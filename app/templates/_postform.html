@@ -17,7 +17,7 @@
       </div>
       {% elif get_flashed_messages() %}
       <div class="valid-feedback">
-        {{ get_flashed_messages() | join(" ")}}
+        {{ get_flashed_messages(category_filter=["validation"]) | join(" ")}}
       </div>
       {% endif %}
     </div>
