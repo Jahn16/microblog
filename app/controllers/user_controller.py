@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, current_app as app
 from flask_login import login_required, current_user
 
 from app.db import get_db
@@ -11,6 +11,7 @@ db = get_db()
 
 
 def profile(username):
+    app.logger.info("Acessing {username} profile")
     user = User.query.filter_by(username=username).first_or_404()
     posts = (
         Post.query.filter_by(user_id=user.id)
@@ -34,6 +35,7 @@ def edit():
     )
     edit_password_token = encode_url(current_user.email, salt="recover-key")
     if form.validate_on_submit():
+        app.logger.info(f"Editing user {current_user.username} profile")
         form.populate_obj(current_user)
         db.session.commit()
         return redirect(
@@ -61,8 +63,16 @@ def follow_unfollow():
             return redirect(url_for("index"))
 
         if not current_user.is_following(followed_user):
+            app.logger.info(
+                f"User {current_user.username} "
+                f"followed {followed_user.username}"
+            )
             current_user.follow(followed_user)
         else:
+            app.logger.info(
+                f"User {current_user.username} "
+                f"unfollowed {followed_user.username}"
+            )
             current_user.unfollow(followed_user)
         db.session.commit()
         return redirect(

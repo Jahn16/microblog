@@ -1,4 +1,11 @@
-from flask import request, render_template, redirect, url_for, flash
+from flask import (
+    request,
+    render_template,
+    redirect,
+    url_for,
+    flash,
+    current_app as app,
+)
 from sqlalchemy import or_
 from flask_login import current_user, login_required
 
@@ -14,11 +21,10 @@ db = get_db()
 def posts():
     form = PostForm()
     page = request.args.get("page", 1, type=int)
+    app.logger.info(f"Retrieving all posts in page {page}")
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=6, error_out=False
     )
-    if form.is_submitted():
-        print("sadasdl")
     return render_template("index.html", posts=posts, form=form)
 
 
@@ -26,6 +32,7 @@ def posts():
 def followed_posts():
     form = PostForm()
     page = request.args.get("page", 1, type=int)
+    app.logger.info(f"Retrieving followed posts by {current_user.username}")
     posts = (
         Post.query.filter(
             or_(
@@ -47,6 +54,7 @@ def post():
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.content.data, author=current_user)
+        app.logger.info(f"User {current_user.username} posted")
         db.session.add(post)
         db.session.commit()
         flash("Enviado com sucesso.", category="validation")
