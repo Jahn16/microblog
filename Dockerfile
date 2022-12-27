@@ -22,6 +22,6 @@ ENV PATH="/usr/app/venv/bin:$PATH"
 ENV FLASK_APP="app/app.py"
 
 
-CMD flask db upgrade && gunicorn --bind 0.0.0.0:5000 "app.app:create_app()"
+CMD flask db upgrade && gunicorn --bind 0.0.0.0:5000 -w 3 "app.app:create_app()"
 
 
