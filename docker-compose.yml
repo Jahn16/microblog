@@ -1,0 +1,20 @@
+version: "3"
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - "db"
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0.21
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: microblog
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+
