@@ -3,7 +3,7 @@ import json
 from flask import Flask
 from flask_moment import Moment
 
-from app.db import init_db
+from app.db import init_db, get_db
 from app.login import init_login_manager
 from app.utils.email import init_mail
 from app.routes.post_bp import post_bp
@@ -33,4 +33,9 @@ def create_app(test_config=None):
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(error_bp)
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return {"app": app, "db": get_db()}
+
     return app

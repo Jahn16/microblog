@@ -8,7 +8,7 @@ migrate = Migrate()
 
 def init_db():
     db.init_app(current_app._get_current_object())
-    migrate.init_app(current_app)
+    migrate.init_app(current_app._get_current_object(), db)
 
 
 def get_db():
