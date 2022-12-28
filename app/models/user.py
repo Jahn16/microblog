@@ -41,7 +41,6 @@ class User(UserMixin, db.Model):
         return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}"
 
     def is_following(self, user):
-        print(bool(self.following.filter(user_follower.c.user_id == user.id).first()))
         return (
             self.following.filter(user_follower.c.user_id == user.id).first()
             is not None
@@ -50,10 +49,8 @@ class User(UserMixin, db.Model):
     def follow(self, user):
         if not self.is_following(user):
             self.following.append(user)
-            print("seguindo")
 
     def unfollow(self, user):
-        print("called")
         if self.is_following(user):
             self.following.remove(user)
 
