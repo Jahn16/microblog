@@ -1,0 +1,26 @@
+<div class="container">
+  <form method="post" action="{{ url_for('post_bp.post') }}" class="mx-auto" novalidate>
+    {{ form.csrf_token }}
+    <div class="input-group mb-1">
+      {% if get_flashed_messages() %}
+      {{ form.content(cols=32, rows=4, class="form-control is-valid")}}
+      {% elif form.content.errors %}
+      {{ form.content(cols=32, rows=4, class="form-control is-invalid")}}
+      {% else %}
+      {{ form.content(cols=32, rows=4, class="form-control")}}
+      {% endif %}
+      <button class="btn btn-outline-primary" type="submit" id="button-addon2"><i
+          class="fa-regular fa-paper-plane px-1"></i></button>
+      {% if form.content.errors %}
+      <div class="invalid-feedback">
+        {{ form.content.errors | join(" ") }}
+      </div>
+      {% elif get_flashed_messages() %}
+      <div class="valid-feedback">
+        {{ get_flashed_messages(category_filter=["validation"]) | join(" ")}}
+      </div>
+      {% endif %}
+    </div>
+  </form>
+</div>
+

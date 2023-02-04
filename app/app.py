@@ -1,30 +1,41 @@
 import json
 
 from flask import Flask
-from flask import render_template, redirect, flash, url_for
+from flask_moment import Moment
 
-from app.forms import LoginForm
-
-app = Flask(__name__)
-
-app.config.from_file("../config.json", load=json.load)
-
-
-@app.route("/")
-@app.route("/index")
-def index():
-    user = {"username": "Jahn"}
-    posts = [
-        {"author": {"username": "John"}, "body": "Belo dia em BH!"},
-        {"author": {"username": "Susan"}, "body": "Boa vitoria Brasileira!"},
-    ]
-    return render_template("index.html", title="Home", user=user, posts=posts)
+from app.db import init_db, get_db
+from app.login import init_login_manager
+from app.utils.email import init_mail
+from app.routes.post_bp import post_bp
+from app.routes.auth_bp import auth_bp
+from app.routes.user_bp import user_bp
+from app.routes.error_bp import error_bp
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        flash(f"Requisitado entrada de usuário {form.username.data}")
-        return redirect(url_for("index"))
-    return render_template("login.html", title="Sign In", form=form)
+moment = Moment()
+
+
+def create_app(test_config=None):
+    app = Flask(__name__)
+    if not test_config:
+        app.config.from_file("../config.json", load=json.load)
+    else:
+        app.config.from_mapping(test_config)
+
+    with app.app_context():
+        init_db()
+        init_login_manager()
+        init_mail()
+    moment.init_app(app)
+
+    app.register_blueprint(post_bp)
+    app.add_url_rule("/", endpoint="index")
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(user_bp)
+    app.register_blueprint(error_bp)
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return {"app": app, "db": get_db()}
+
+    return app
