@@ -7,6 +7,6 @@ Flask-Moment==1.0.5
 Flask-WTF==1.0.1
 wtforms[email]==3.0.1
 itsdangerous==2.1.2
+psycopg2-binary==2.9.5
 gunicorn==20.1.0
-PyMySQL==1.0.2
 cryptography==38.0.4
